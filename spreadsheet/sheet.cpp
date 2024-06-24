@@ -13,21 +13,9 @@ using namespace std::literals;
 Sheet::~Sheet() {}
 
 void Sheet::SetCell(Position pos, std::string text) {
-    if(!pos.IsValid()) throw InvalidPositionException ("неверный номер ячейки");  
-    std::unique_ptr<Cell> cell_ptr = std::move(std::make_unique<Cell>(*this));       
-    cell_ptr -> Set(text);    
-    std:: vector<Position> UpperNodeCells;
-	UpperNodeCells.push_back(pos);
-    std::vector<Position> ReferencedCells = cell_ptr -> GetReferencedCells(); 
-    if (ReferencedCells.size()==0){;}
-	else{
-        for(const auto& cell:ReferencedCells){
-            if (count(UpperNodeCells.begin(),UpperNodeCells.end(),cell)) {
-                throw CircularDependencyException("Циклическая зависимость");
-            }
-            else IsCyclicDependenced(*this,cell,UpperNodeCells);
-        }            	
-    }    
+    ErrorPosValid(pos); 
+    std::unique_ptr<Cell> cell_ptr = std::move(std::make_unique<Cell>(*this));
+    cell_ptr -> Set(text, pos); 
     if(cells_posit_.count(pos))  {
         sheet_[pos.row][pos.col]->Clear();	
     }
@@ -62,11 +50,11 @@ void Sheet::SetCell(Position pos, std::string text) {
 
 
 const CellInterface* Sheet::GetCell(Position pos) const { 
-    if(!pos.IsValid()) throw InvalidPositionException ("неверный номер ячейки"); 
+    ErrorPosValid(pos);  
     if(cells_posit_.count(pos) == 0){
        const auto print_size =  GetPrintableSize(); 
        if (pos.row < print_size.rows && pos.col < print_size.cols){
-           sheet_[pos.row][pos.col] -> Set("");           
+           sheet_[pos.row][pos.col] -> Set("",pos);           
            return sheet_[pos.row][pos.col].get();
        } 
        return nullptr;
@@ -76,11 +64,11 @@ const CellInterface* Sheet::GetCell(Position pos) const {
 }
 
 CellInterface* Sheet::GetCell(Position pos) {  
-    if(!pos.IsValid()) throw InvalidPositionException ("неверный номер ячейки"); 
+    ErrorPosValid(pos); 
     if(cells_posit_.count(pos) == 0){
         const auto print_size =  GetPrintableSize(); 
         if (pos.row < print_size.rows && pos.col < print_size.cols){
-           sheet_[pos.row][pos.col] -> Set("");           
+           sheet_[pos.row][pos.col] -> Set("",pos);           
            return sheet_[pos.row][pos.col].get();
         }
          return nullptr;
@@ -89,7 +77,7 @@ CellInterface* Sheet::GetCell(Position pos) {
 }
 
 void Sheet::ClearCell(Position pos) {
-    if(!pos.IsValid()) throw InvalidPositionException ("неверный номер ячейки"); 
+    ErrorPosValid(pos); 
     if(cells_posit_.count(pos) == 0);
     else {
             if(cell_dependencies_.count(pos)){
@@ -149,23 +137,6 @@ void Sheet::PrintTexts(std::ostream& output) const {
        }
        output<<'\n'; 
     }   
-}
-
-void Sheet::IsCyclicDependenced(const Sheet& sheet,
-                                const Position& curent_cell, 
-                               std:: vector<Position> UpperNodeCells){
-	UpperNodeCells.push_back(curent_cell);
-    if (sheet.GetCell(curent_cell)==nullptr) return;//возможно пределать
-	std::vector<Position> ReferencedCells = (sheet.GetCell(curent_cell)) -> GetReferencedCells();
-	if (ReferencedCells.size()==0){;}
-	else{
-		for(const auto& cell:ReferencedCells){
-			if (count(UpperNodeCells.begin(),UpperNodeCells.end(),cell)) {
-                throw CircularDependencyException("Циклическая зависимость");
-            }
-			else IsCyclicDependenced(sheet,cell,UpperNodeCells);
-	    }
-	}
 }
 
 std::unique_ptr<SheetInterface> CreateSheet() {

@@ -26,6 +26,7 @@ struct Position {
     static const Position NONE;
 };
 
+
 struct Size {
     int rows = 0;
     int cols = 0;
@@ -167,6 +168,10 @@ public:
     virtual void PrintValues(std::ostream& output) const = 0;
     virtual void PrintTexts(std::ostream& output) const = 0;
 };
+
+inline void ErrorPosValid(Position pos){
+    if(!pos.IsValid()) throw InvalidPositionException ("неверный номер ячейки"); 
+}
 
 // Создаёт готовую к работе пустую таблицу.
 std::unique_ptr<SheetInterface> CreateSheet();

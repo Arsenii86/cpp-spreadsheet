@@ -26,15 +26,11 @@ public:
     const std::set<Position>& GetCellsInput(){
         return cells_posit_;
     }
-	// Можете дополнить ваш класс нужными полями и методами  
+	// Можете дополнить ваш класс нужными полями и методами      
     
-    void IsCyclicDependenced(const Sheet& sheet,
-                                const Position& curent_cell, 
-                                std::vector<Position> UpperNodeCells = {});
-   
 private:
 	// Можете дополнить ваш класс нужными полями и методами   
     std::vector<std::vector<std::unique_ptr<Cell>>> sheet_;
     std::set<Position> cells_posit_;
-    std::map<Position,std::vector<Position>> cell_dependencies_;/////!!!!!!!!!!!!
+    std::map<Position,std::vector<Position>> cell_dependencies_; 
 };

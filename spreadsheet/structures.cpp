@@ -77,8 +77,3 @@ bool Size::operator==(Size rhs) const {
     return cols == rhs.cols && rows == rhs.rows;
 }
 
-/*Size& Size::operator=(Size rhs) {
-    cols = rhs.cols;
-    rows = rhs.rows;
-    return *this;
-}*/

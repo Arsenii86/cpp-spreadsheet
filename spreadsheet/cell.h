@@ -13,7 +13,7 @@ class Cell : public CellInterface {
     Cell(Sheet& sheet);
     ~Cell()=default;
 
-    void Set(std::string text);
+    void Set(std::string text,[[maybe_unused]] Position& pos);
     void Clear();
     void SetTempValue(CellInterface::Value val);    
     CellInterface::Value GetValue() const override;
@@ -24,13 +24,17 @@ class Cell : public CellInterface {
     void Validate(bool valid);
     
 private:
+    void IsCyclicDependenced(const Sheet& sheet,
+                                const Position& curent_cell, 
+                                std::vector<Position> UpperNodeCells = {});  
+    
     class Impl;
     class EmptyImpl;
     class TextImpl;
     class FormulaImpl;
 
     std::unique_ptr<Impl> impl_;
-    SheetInterface& sheet_;        
+    Sheet& sheet_;        
     bool is_valid_;
     CellInterface::Value temp_;
 };
@@ -122,3 +126,5 @@ class Cell::FormulaImpl: public Cell::Impl{
     
     
 };
+
+

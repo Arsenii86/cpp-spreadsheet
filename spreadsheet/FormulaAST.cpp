@@ -143,22 +143,28 @@ public:
     }
 
     double Evaluate([[maybe_unused]]  const SheetInterface& args) const override {
-       switch (type_) {
+        double left_val = lhs_->Evaluate(args);
+        double right_val =  rhs_->Evaluate(args); 
+        double add_val = left_val + right_val;
+        double substract_val = left_val - right_val;
+        double multiply_val = left_val * right_val;  
+        double divide_val = left_val / right_val;    
+        switch (type_) {
             case Add:
-               if (!std::isfinite(lhs_->Evaluate(args) + rhs_->Evaluate(args))) throw FormulaError(FormulaError::Category::Arithmetic);
-                return (lhs_->Evaluate(args) + rhs_->Evaluate(args));
+                if (!std::isfinite(add_val)) throw FormulaError(FormulaError::Category::Arithmetic);
+                return (add_val);
                 break;
             case Subtract:
-               if (!std::isfinite(lhs_->Evaluate(args) - rhs_->Evaluate(args))) throw FormulaError(FormulaError::Category::Arithmetic);
-                return (lhs_->Evaluate(args) - rhs_->Evaluate(args));
+               if (!std::isfinite(substract_val)) throw FormulaError(FormulaError::Category::Arithmetic);
+                return (substract_val);
                 break;
             case Multiply:
-               if (!std::isfinite(lhs_->Evaluate(args) * rhs_->Evaluate(args))) throw FormulaError(FormulaError::Category::Arithmetic);
-                return (lhs_->Evaluate(args) * rhs_->Evaluate(args));
+               if (!std::isfinite(multiply_val)) throw FormulaError(FormulaError::Category::Arithmetic);
+                return (multiply_val);
                 break;
             case Divide:
-                if (!std::isfinite(lhs_->Evaluate(args) / rhs_->Evaluate(args))) throw FormulaError(FormulaError::Category::Arithmetic);
-                else return (lhs_->Evaluate(args) / rhs_->Evaluate(args));
+                if (!std::isfinite(divide_val)) throw FormulaError(FormulaError::Category::Arithmetic);
+                else return (divide_val);
             default:                
                 assert(false);
                 return 0.0;
@@ -254,16 +260,18 @@ public:
                 std::string val_str = std::get<std::string>(value);		
                 if(val_str.empty()) return 0.0;                
                 try{ 
-                    size_t char_pos=0;
+                    size_t char_pos = 0;
                     double val_doub = std::stod(val_str,&char_pos);
-                    if (char_pos!=val_str.size()) throw FormulaError(FormulaError::Category::Value);
+                    if (char_pos != val_str.size()) throw FormulaError(FormulaError::Category::Value);
                     return val_doub;
                 }
                 catch(...){                    
                     throw FormulaError(FormulaError::Category::Value);
                 }	
             }
-           else if (std::holds_alternative<FormulaError>(value)) throw std::get<FormulaError>(value);//!!!!!!!!!!!!
+           else if (std::holds_alternative<FormulaError>(value)){
+               throw std::get<FormulaError>(value);
+           }
            else return  std::get<double>(value); 
        }
     }

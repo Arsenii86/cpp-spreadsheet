@@ -1,5 +1,5 @@
 #include <limits>
-
+#include <iostream>
 #include "common.h"
 #include "formula.h"
 #include "test_runner_p.h"
@@ -102,6 +102,7 @@ void TestSetCellPlainText() {
 
     auto checkCell = [&](Position pos, std::string text) {
         sheet->SetCell(pos, text);
+       
         CellInterface* cell = sheet->GetCell(pos);
         ASSERT(cell != nullptr);
         ASSERT_EQUAL(cell->GetText(), text);
@@ -109,7 +110,9 @@ void TestSetCellPlainText() {
     };
 
     checkCell("A1"_pos, "Hello");
+    
     checkCell("A1"_pos, "World");
+    
     checkCell("B2"_pos, "Purr");
     checkCell("A3"_pos, "Meow");
 
