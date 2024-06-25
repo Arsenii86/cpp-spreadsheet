@@ -101,7 +101,7 @@ Size Sheet::GetPrintableSize() const {
             if (print_col < cell_pos.col) print_col = cell_pos.col;
         } 
     }
-    return Size{print_row+1, print_col+1};  
+    return Size{print_row + 1, print_col + 1};  
 }
 
 void Sheet::PrintValues(std::ostream& output) const {

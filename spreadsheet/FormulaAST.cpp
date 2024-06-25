@@ -145,32 +145,27 @@ public:
     double Evaluate([[maybe_unused]]  const SheetInterface& args) const override {
         double left_val = lhs_->Evaluate(args);
         double right_val =  rhs_->Evaluate(args); 
-        double add_val = left_val + right_val;
-        double substract_val = left_val - right_val;
-        double multiply_val = left_val * right_val;  
-        double divide_val = left_val / right_val;    
+        double result;
         switch (type_) {
             case Add:
-                if (!std::isfinite(add_val)) throw FormulaError(FormulaError::Category::Arithmetic);
-                return (add_val);
+                result = left_val + right_val;
                 break;
             case Subtract:
-               if (!std::isfinite(substract_val)) throw FormulaError(FormulaError::Category::Arithmetic);
-                return (substract_val);
+                result = left_val - right_val;
                 break;
             case Multiply:
-               if (!std::isfinite(multiply_val)) throw FormulaError(FormulaError::Category::Arithmetic);
-                return (multiply_val);
+                result = left_val * right_val;
                 break;
             case Divide:
-                if (!std::isfinite(divide_val)) throw FormulaError(FormulaError::Category::Arithmetic);
-                else return (divide_val);
+                result = left_val / right_val; 
+                break;
             default:                
                 assert(false);
                 return 0.0;
                 break;
          }
-                
+    if (!std::isfinite(result)) throw FormulaError(FormulaError::Category::Arithmetic);
+    return (result);
     }
     
 
